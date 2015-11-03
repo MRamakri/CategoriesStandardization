@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 
 access_key = ""
 secret_key = ""
-associate_id = "funtelligent-20"
+associate_id = ""
 
 amazon = bottlenose.Amazon(access_key, secret_key, associate_id)
 
