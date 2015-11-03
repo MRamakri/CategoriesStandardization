@@ -1,10 +1,15 @@
+import json
 from bs4 import BeautifulSoup
-
-from amazonAPI import upc_category_lookup
+from amazonAPI import upc_category_lookup, asin_description_lookup
 from convertToUPCA import pad_zeroes, add_check_digit
 
-upc = "3120001605"
+upc = "3800032410"
 
+
+# TODO: Read UPCs from file
+# TODO: Write Categories into file
+# TODO: Read UPCs from DPN using PyHive
+# TODO: Write Categories into HDFS using PyHive
 
 def valid_api_response(api_response):
     global soup
@@ -12,8 +17,7 @@ def valid_api_response(api_response):
     fail_message = soup.find('errors')
     if fail_message is None:
         print("Found!")
-        print(response)
-        print(type(soup))
+        #print(response)
         return 1
         # print(soup.prettify())
     else:
@@ -22,11 +26,33 @@ def valid_api_response(api_response):
 
 
 def extract_category_hierarchy():
-    first_item = soup.find('item')
-    print(first_item.prettify())
-    categories = first_item.findAll('name')
-    for category in categories:
-        print(category.text)
+    global department
+    category_list = []
+    items = soup.findAll('item')
+    for item in items:
+        description = asin_description_lookup(item.find('asin').text)
+        nodes = item.findAll('browsenodes')
+        for node in nodes:
+            category_list = []
+            categories = node.findAll('name')
+            #print(categories)
+            for index, category in enumerate(categories):
+                if category.text == 'Categories':
+                    department = categories[index + 1].text
+                    while index > 0:
+                        category_list.append(categories[index - 1].text)
+                        index -= 1
+                    break
+            upc_category = {
+                'UPC': upc,
+                'Description': description,
+                'Source': 'Amazon',
+                'Department': department,
+                'Category': category_list
+            }
+            upc_category_json  = json.dumps(upc_category)
+            print(upc_category_json)
+            print('------------')
 
 
 padded_upc = pad_zeroes(upc)
