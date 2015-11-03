@@ -1,8 +1,8 @@
 import bottlenose
 from bs4 import BeautifulSoup
 
-access_key = "AKIAICAETJ4OV7TWQKKQ"
-secret_key = "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"
+access_key = ""
+secret_key = ""
 associate_id = "funtelligent-20"
 
 amazon = bottlenose.Amazon(access_key, secret_key, associate_id)
