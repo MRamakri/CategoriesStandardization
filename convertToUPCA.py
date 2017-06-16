@@ -13,7 +13,9 @@ def pad_zeroes(upc_str):
         zero_padded_upc = upc_str
         for i in range(12 - missing_digits - 1):
             zero_padded_upc = "0" + zero_padded_upc
-    return zero_padded_upc
+        return zero_padded_upc
+    else:
+        return upc_str
 
 def add_check_digit(zero_padded_upc):
     """
